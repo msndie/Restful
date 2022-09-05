@@ -3,6 +3,7 @@ package edu.school21.restful.model;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
@@ -12,6 +13,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Getter
 @Setter
+@ToString
 @Entity
 @Table(name = "users")
 public class User {
@@ -41,18 +43,21 @@ public class User {
     @Type(type = "org.hibernate.type.TextType")
     private String password;
 
+    @ToString.Exclude
     @ManyToMany
     @JoinTable(name = "course_students",
-            joinColumns = @JoinColumn(name = "student_id"),
-            inverseJoinColumns = @JoinColumn(name = "course_id"))
+            joinColumns = @JoinColumn(name = "student_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "course_id", referencedColumnName = "id"))
     private Set<Course> coursesAsStudent = new LinkedHashSet<>();
 
+    @ToString.Exclude
     @OneToMany(mappedBy = "teacher")
     private Set<Lesson> lessons = new LinkedHashSet<>();
 
+    @ToString.Exclude
     @ManyToMany
     @JoinTable(name = "course_teachers",
-            joinColumns = @JoinColumn(name = "teacher_id"),
-            inverseJoinColumns = @JoinColumn(name = "course_id"))
+            joinColumns = @JoinColumn(name = "teacher_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "course_id", referencedColumnName = "id"))
     private Set<Course> coursesAsTeacher = new LinkedHashSet<>();
 }

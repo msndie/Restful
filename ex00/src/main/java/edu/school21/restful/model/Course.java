@@ -49,7 +49,7 @@ public class Course {
     @ToString.Exclude
     private Set<User> students = new LinkedHashSet<>();
 
-    @OneToMany(mappedBy = "course")
+    @OneToMany(mappedBy = "courseId")
     @ToString.Exclude
     private Set<Lesson> lessons = new LinkedHashSet<>();
 

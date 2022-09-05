@@ -7,4 +7,6 @@ public interface Service<T> {
     void delete(T entity);
     List<T> findAll();
     T update(T entity);
+    boolean existsById(Long id);
+    void deleteById(Long id);
 }

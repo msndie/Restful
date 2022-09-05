@@ -39,4 +39,19 @@ public class UserServiceImpl implements UserService {
     public User update(User entity) {
         return userRepository.save(entity);
     }
+
+    @Override
+    public boolean existsById(Long id) {
+        return userRepository.existsById(id);
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        userRepository.deleteById(id);
+    }
+
+    @Override
+    public boolean existsByIdAndRole(Long id, String  role) {
+        return userRepository.existsByIdAndRole(id, role);
+    }
 }

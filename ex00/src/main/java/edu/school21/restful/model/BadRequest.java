@@ -1,8 +1,13 @@
 package edu.school21.restful.model;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import edu.school21.restful.utils.View;
+
 public class BadRequest {
     private static volatile BadRequest instance;
+    @JsonView(View.LessonsView.class)
     private final int status;
+    @JsonView(View.LessonsView.class)
     private final String message;
 
     private BadRequest() {

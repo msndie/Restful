@@ -39,4 +39,14 @@ public class LessonServiceImpl implements LessonService {
     public Lesson update(Lesson entity) {
         return lessonRepository.save(entity);
     }
+
+    @Override
+    public boolean existsById(Long id) {
+        return lessonRepository.existsById(id);
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        lessonRepository.deleteById(id);
+    }
 }
