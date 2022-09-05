@@ -1,14 +1,13 @@
 package edu.school21.restful.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import edu.school21.restful.utils.DayOfWeekDeserializer;
 import edu.school21.restful.utils.View;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
@@ -18,7 +17,6 @@ import java.time.LocalTime;
 @NoArgsConstructor
 @Getter
 @Setter
-@ToString
 @Entity
 @Table(name = "lessons")
 public class Lesson {
@@ -38,12 +36,11 @@ public class Lesson {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "day_of_week", nullable = false)
-    @Type(type = "org.hibernate.type.TextType")
+//    @Type(type = "org.hibernate.type.TextType")
     @JsonDeserialize(using = DayOfWeekDeserializer.class)
     @JsonView(View.LessonsView.class)
     private DayOfWeek dayOfWeek;
 
-    @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "teacher_id", nullable = false)
     private User teacher;
@@ -53,9 +50,9 @@ public class Lesson {
 //    @JoinColumn(name = "course_id", nullable = false)
 //    private Course course;
 
-    @Transient
-    @JsonView(View.LessonsView.class)
-    private Long teacherId;
+//    @Transient
+//    @JsonView(View.LessonsView.class)
+//    private Long teacherId;
 
     @Column(name = "course_id", nullable = false)
     private Long courseId;

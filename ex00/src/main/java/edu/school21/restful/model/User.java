@@ -3,17 +3,17 @@ package edu.school21.restful.model;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
+import org.hibernate.Hibernate;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.util.LinkedHashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @NoArgsConstructor
 @Getter
 @Setter
-@ToString
 @Entity
 @Table(name = "users")
 public class User {
@@ -32,32 +32,42 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false)
-    @Type(type = "org.hibernate.type.TextType")
+//    @Type(type = "org.hibernate.type.TextType")
     private Role role;
 
-    @Column(name = "login", nullable = false)
+    @Column(name = "login")
     @Type(type = "org.hibernate.type.TextType")
     private String login;
 
-    @Column(name = "password", nullable = false)
+    @Column(name = "password")
     @Type(type = "org.hibernate.type.TextType")
     private String password;
 
-    @ToString.Exclude
     @ManyToMany
     @JoinTable(name = "course_students",
             joinColumns = @JoinColumn(name = "student_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "course_id", referencedColumnName = "id"))
     private Set<Course> coursesAsStudent = new LinkedHashSet<>();
 
-    @ToString.Exclude
     @OneToMany(mappedBy = "teacher")
     private Set<Lesson> lessons = new LinkedHashSet<>();
 
-    @ToString.Exclude
     @ManyToMany
     @JoinTable(name = "course_teachers",
             joinColumns = @JoinColumn(name = "teacher_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "course_id", referencedColumnName = "id"))
     private Set<Course> coursesAsTeacher = new LinkedHashSet<>();
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        User user = (User) o;
+        return id != null && Objects.equals(id, user.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 }

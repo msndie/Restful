@@ -3,8 +3,8 @@ CREATE TABLE IF NOT EXISTS users (
     first_name TEXT NOT NULL,
     last_name  TEXT NOT NULL,
     role       TEXT NOT NULL,
-    login      TEXT NOT NULL,
-    password   TEXT NOT NULL
+    login      TEXT,
+    password   TEXT
 );
 
 CREATE TABLE IF NOT EXISTS courses (

@@ -1,5 +1,6 @@
 package edu.school21.restful.services;
 
+import edu.school21.restful.model.Role;
 import edu.school21.restful.model.User;
 import edu.school21.restful.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -51,7 +53,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean existsByIdAndRole(Long id, String  role) {
+    public boolean existsByIdAndRole(Long id, Role role) {
         return userRepository.existsByIdAndRole(id, role);
+    }
+
+    @Override
+    public Optional<User> findById(Long id) {
+        return userRepository.findById(id);
     }
 }
