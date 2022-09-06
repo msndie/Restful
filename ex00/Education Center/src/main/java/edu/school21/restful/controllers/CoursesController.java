@@ -6,6 +6,13 @@ import edu.school21.restful.services.CourseService;
 import edu.school21.restful.services.LessonService;
 import edu.school21.restful.services.UserService;
 import edu.school21.restful.utils.MappingUtils;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -21,6 +28,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/courses")
+@Tag(name = "Courses", description = "The courses API")
 public class CoursesController {
 
     private final Map<String, Object> error;
@@ -37,7 +45,7 @@ public class CoursesController {
         this.userService = userService;
         this.error = Collections.singletonMap("error", BadRequest.getInstance());
     }
-
+    
     @GetMapping
     public ResponseEntity<Object> get(@RequestParam(required = false, value = "page") Integer page,
                                       @RequestParam(required = false, value = "size") Integer size) {
