@@ -32,7 +32,6 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false)
-//    @Type(type = "org.hibernate.type.TextType")
     private Role role;
 
     @Column(name = "login")

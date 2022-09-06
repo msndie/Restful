@@ -14,8 +14,6 @@ public class DayOfWeekDeserializer extends JsonDeserializer<DayOfWeek> {
     @Override
     public DayOfWeek deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException, JacksonException {
         JsonNode node = jsonParser.getCodec().readTree(jsonParser);
-//        String day = node.get("dayOfWeek").asText();
-//        return DayOfWeek.valueOf(day.toUpperCase());
         return DayOfWeek.valueOf(node.asText().toUpperCase());
     }
 }

@@ -3,11 +3,15 @@ package edu.school21.restful.services;
 import edu.school21.restful.model.Lesson;
 import edu.school21.restful.repositories.LessonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.LinkedList;
 import java.util.List;
 
+@Transactional
 @Service
 public class LessonServiceImpl implements LessonService {
 
@@ -48,5 +52,15 @@ public class LessonServiceImpl implements LessonService {
     @Override
     public void deleteById(Long id) {
         lessonRepository.deleteById(id);
+    }
+
+    @Override
+    public Page<Lesson> findAll(Pageable pageable) {
+        return lessonRepository.findAll(pageable);
+    }
+
+    @Override
+    public List<Lesson> findAllByCourseId(Long courseId, Pageable pageable) {
+        return lessonRepository.findByCourseId(courseId, pageable);
     }
 }

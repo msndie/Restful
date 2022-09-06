@@ -5,13 +5,11 @@ import edu.school21.restful.model.Role;
 import edu.school21.restful.utils.RoleDeserializer;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@AllArgsConstructor
-@NoArgsConstructor
 @Setter
 @Getter
+@AllArgsConstructor
 public class UserDto {
     private Long id;
     private String firstName;

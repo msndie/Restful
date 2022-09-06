@@ -7,11 +7,8 @@ import lombok.*;
 import java.time.DayOfWeek;
 import java.time.LocalTime;
 
-@AllArgsConstructor
-@NoArgsConstructor
 @Setter
 @Getter
-@ToString
 public class LessonDtoIn {
     private Long id;
     private LocalTime startTime;

@@ -1,8 +1,5 @@
 package edu.school21.restful.model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonView;
-import edu.school21.restful.utils.View;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -22,27 +19,20 @@ public class Course {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
-//    @JsonView(View.CourseView.class)
     private Long id;
 
-//    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     @Column(name = "start_date", nullable = false)
-//    @JsonView(View.CourseView.class)
     private LocalDate startDate;
 
-//    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     @Column(name = "end_date", nullable = false)
-//    @JsonView(View.CourseView.class)
     private LocalDate endDate;
 
     @Column(name = "name", nullable = false)
     @Type(type = "org.hibernate.type.TextType")
-//    @JsonView(View.CourseView.class)
     private String name;
 
     @Column(name = "description", nullable = false)
     @Type(type = "org.hibernate.type.TextType")
-//    @JsonView(View.CourseView.class)
     private String description;
 
     @ManyToMany

@@ -3,12 +3,16 @@ package edu.school21.restful.services;
 import edu.school21.restful.model.Course;
 import edu.school21.restful.repositories.CourseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
+@Transactional
 @Service
 public class CourseServiceImpl implements CourseService {
 
@@ -44,6 +48,11 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public Optional<Course> getById(Long id) {
         return courseRepository.findById(id);
+    }
+
+    @Override
+    public Page<Course> findAll(Pageable pageable) {
+        return courseRepository.findAll(pageable);
     }
 
     @Override

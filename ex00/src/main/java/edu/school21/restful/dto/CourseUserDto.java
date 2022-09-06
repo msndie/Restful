@@ -1,14 +1,10 @@
 package edu.school21.restful.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
-@AllArgsConstructor
-@NoArgsConstructor
 @Setter
 @Getter
+@AllArgsConstructor
 public class CourseUserDto {
     private Long id;
     private String firstName;
