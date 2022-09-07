@@ -1,20 +1,31 @@
 package edu.school21.restful.config;
 
+import com.fasterxml.classmate.TypeResolver;
+import edu.school21.restful.dto.*;
+import io.swagger.v3.oas.models.examples.Example;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
+import springfox.documentation.builders.ResponseBuilder;
+import springfox.documentation.service.Response;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+
 @Configuration
 @EnableJpaRepositories("edu.school21.restful.repositories")
-//@ComponentScan("edu.school21.restful")
 public class SpringConfig {
     @Bean
-    public Docket api() {
-        return new Docket(DocumentationType.SWAGGER_2)
+    public Docket api(TypeResolver typeResolver) {
+        return new Docket(DocumentationType.OAS_30)
+                .additionalModels(typeResolver.resolve(BadRequest.class))
+                .useDefaultResponseMessages(false)
                 .select()
                 .apis(RequestHandlerSelectors.basePackage("edu.school21.restful.controllers"))
                 .paths(PathSelectors.any())

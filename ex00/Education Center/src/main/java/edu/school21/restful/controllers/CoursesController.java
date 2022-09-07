@@ -1,18 +1,15 @@
 package edu.school21.restful.controllers;
 
 import edu.school21.restful.dto.*;
+import edu.school21.restful.exception.BadRequestException;
 import edu.school21.restful.model.*;
 import edu.school21.restful.services.CourseService;
 import edu.school21.restful.services.LessonService;
 import edu.school21.restful.services.UserService;
 import edu.school21.restful.utils.MappingUtils;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -20,18 +17,13 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/courses")
-@Tag(name = "Courses", description = "The courses API")
 public class CoursesController {
 
-    private final Map<String, Object> error;
     private final CourseService courseService;
     private final LessonService lessonService;
     private final UserService userService;
@@ -43,12 +35,15 @@ public class CoursesController {
         this.courseService = courseService;
         this.lessonService = lessonService;
         this.userService = userService;
-        this.error = Collections.singletonMap("error", BadRequest.getInstance());
     }
-    
-    @GetMapping
-    public ResponseEntity<Object> get(@RequestParam(required = false, value = "page") Integer page,
-                                      @RequestParam(required = false, value = "size") Integer size) {
+
+    @GetMapping(produces = "application/json")
+    @ApiResponse(
+            responseCode="400",
+            description="Error in the request",
+            content=@Content(mediaType = "application/json", schema=@Schema(implementation = BadRequest.class)))
+    public ResponseEntity<List<CourseDto>> get(@RequestParam(required = false, value = "page") Integer page,
+                                               @RequestParam(required = false, value = "size") Integer size) {
         if (page != null && size != null) {
             if (page >= 0 && size > 0) {
                 Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.asc("id")));
@@ -58,7 +53,7 @@ public class CoursesController {
                         .map(MappingUtils::courseToDto)
                         .collect(Collectors.toList()));
             } else {
-                return ResponseEntity.badRequest().body(error);
+                throw new BadRequestException();
             }
         }
         return ResponseEntity.ok(courseService
@@ -68,51 +63,73 @@ public class CoursesController {
                 .collect(Collectors.toList()));
     }
 
-    @PostMapping
-    public ResponseEntity<Object> post(@RequestBody CourseDtoIn request) {
+    @ApiResponse(
+            responseCode="400",
+            description="Error in the request",
+            content=@Content(mediaType = "application/json", schema=@Schema(implementation = BadRequest.class)))
+    @PostMapping(produces = "application/json")
+    public ResponseEntity<CourseDto> post(@RequestBody CourseDto request) {
         if (request.getDescription() == null || request.getName() == null
             || request.getStartDate() == null || request.getEndDate() == null
             || request.getStartDate().isAfter(request.getEndDate())) {
-            return ResponseEntity.badRequest().body(error);
+            throw new BadRequestException();
         }
         Course course = MappingUtils.courseToDomain(request);
         courseService.save(course);
         return ResponseEntity.ok(MappingUtils.courseToDto(course));
     }
 
-    @GetMapping(path = "/{id}")
-    public ResponseEntity<Object> getId(@PathVariable Long id) {
+    @ApiResponse(
+            responseCode="400",
+            description="Error in the request",
+            content=@Content(mediaType = "application/json", schema=@Schema(implementation = BadRequest.class)))
+    @GetMapping(path = "/{id}", produces = "application/json")
+    public ResponseEntity<CourseDto> getId(@PathVariable Long id) {
         Optional<Course> course = courseService.getById(id);
-        return course
-                .<ResponseEntity<Object>>map(value -> ResponseEntity.ok(Collections.singletonMap("course", MappingUtils.courseToDto(value))))
-                .orElseGet(() -> ResponseEntity.badRequest().body(error));
+        if (course.isPresent()) {
+            return ResponseEntity.ok(MappingUtils.courseToDto(course.get()));
+        } else {
+            throw new BadRequestException();
+        }
     }
 
-    @RequestMapping(path = "/{id}", method = RequestMethod.PUT)
-    public ResponseEntity<Object> putId(@PathVariable Long id, @RequestBody CourseDtoIn course) {
+    @ApiResponse(
+            responseCode="400",
+            description="Error in the request",
+            content=@Content(mediaType = "application/json", schema=@Schema(implementation = BadRequest.class)))
+    @RequestMapping(path = "/{id}", method = RequestMethod.PUT, produces = "application/json")
+    public ResponseEntity<CourseDto> putId(@PathVariable Long id, @RequestBody CourseDto course) {
         if (course.getDescription() == null || course.getName() == null
                 || course.getStartDate() == null || course.getEndDate() == null
                 || course.getStartDate().isAfter(course.getEndDate())
                 || !courseService.existsById(id)) {
-            return ResponseEntity.badRequest().body(error);
+            throw new BadRequestException();
         }
         Course domain = MappingUtils.courseToDomain(course);
         domain.setId(id);
         courseService.update(domain);
-        return ResponseEntity.ok(Collections.singletonMap("course", MappingUtils.courseToDto(domain)));
+        return ResponseEntity.ok(MappingUtils.courseToDto(domain));
     }
 
-    @RequestMapping(path = "/{id}", method = RequestMethod.DELETE)
+    @ApiResponse(
+            responseCode="400",
+            description="Error in the request",
+            content=@Content(mediaType = "application/json", schema=@Schema(implementation = BadRequest.class)))
+    @RequestMapping(path = "/{id}", method = RequestMethod.DELETE, produces = "application/json")
     public ResponseEntity<Object> deleteId(@PathVariable Long id) {
         if (courseService.existsById(id)) {
             courseService.deleteById(id);
             return ResponseEntity.ok(null);
         }
-        return ResponseEntity.badRequest().body(error);
+        throw new BadRequestException();
     }
 
-    @RequestMapping(path = "/{id}/lessons", method = RequestMethod.GET)
-    public ResponseEntity<Object> getIdLessons(@PathVariable Long id,
+    @ApiResponse(
+            responseCode="400",
+            description="Error in the request",
+            content=@Content(mediaType = "application/json", schema=@Schema(implementation = BadRequest.class)))
+    @RequestMapping(path = "/{id}/lessons", method = RequestMethod.GET, produces = "application/json")
+    public ResponseEntity<List<LessonDtoOut>> getIdLessons(@PathVariable Long id,
                                                @RequestParam(required = false, value = "page") Integer page,
                                                @RequestParam(required = false, value = "size") Integer size) {
         if (courseService.existsById(id)) {
@@ -122,10 +139,9 @@ public class CoursesController {
                     return ResponseEntity.ok(lessonService.findAllByCourseId(id, pageable)
                             .stream()
                             .map(MappingUtils::lessonToDto)
-                            .sorted(Comparator.comparingLong(LessonDtoOut::getId))
                             .collect(Collectors.toList()));
                 } else {
-                    return ResponseEntity.badRequest().body(error);
+                    throw new BadRequestException();
                 }
             }
             return ResponseEntity.ok(lessonService.findAll()
@@ -134,11 +150,15 @@ public class CoursesController {
                     .sorted(Comparator.comparingLong(LessonDtoOut::getId))
                     .collect(Collectors.toList()));
         }
-        return ResponseEntity.badRequest().body(error);
+        throw new BadRequestException();
     }
 
-    @RequestMapping(path = "/{id}/lessons", method = RequestMethod.POST)
-    public ResponseEntity<Object> postIdLessons(@PathVariable Long id, @RequestBody LessonDtoIn lesson) {
+    @ApiResponse(
+            responseCode="400",
+            description="Error in the request",
+            content=@Content(mediaType = "application/json", schema=@Schema(implementation = BadRequest.class)))
+    @RequestMapping(path = "/{id}/lessons", method = RequestMethod.POST, produces = "application/json")
+    public ResponseEntity<LessonDtoOut> postIdLessons(@PathVariable Long id, @RequestBody LessonDtoIn lesson) {
         if (lesson.getTeacherId() != null) {
             Optional<Course> course = courseService.getById(id);
             Optional<User> user = userService.findById(lesson.getTeacherId());
@@ -150,42 +170,58 @@ public class CoursesController {
                 domain.setCourseId(id);
                 domain.setTeacher(user.get());
                 lessonService.save(domain);
-                return ResponseEntity.ok(Collections.singletonMap("lesson", MappingUtils.lessonToDto(domain)));
+                return ResponseEntity.ok(MappingUtils.lessonToDto(domain));
             }
         }
-        return ResponseEntity.badRequest().body(error);
+        throw new BadRequestException();
     }
 
-    @RequestMapping(path = "/{id}/lessons/{lessonId}", method = RequestMethod.PUT)
-    public ResponseEntity<Object> putIdLessonsId(@PathVariable Long id,
+    @ApiResponse(
+            responseCode="400",
+            description="Error in the request",
+            content=@Content(mediaType = "application/json", schema=@Schema(implementation = BadRequest.class)))
+    @RequestMapping(path = "/{id}/lessons/{lessonId}", method = RequestMethod.PUT, produces = "application/json")
+    public ResponseEntity<LessonDtoOut> putIdLessonsId(@PathVariable Long id,
                                                  @PathVariable Long lessonId,
                                                  @RequestBody LessonDtoIn lesson) {
         if (!courseService.existsById(id) || !lessonService.existsById(lessonId)
                 || lesson.getTeacherId() == null || lesson.getDayOfWeek() == null
                 || lesson.getStartTime() == null || lesson.getEndTime() == null
-                || lesson.getStartTime().isAfter(lesson.getEndTime())
-                || !userService.existsByIdAndRole(lesson.getTeacherId(), Role.TEACHER)) {
-            return ResponseEntity.badRequest().body(error);
+                || lesson.getStartTime().isAfter(lesson.getEndTime())) {
+            throw new BadRequestException();
+        }
+        Optional<User> user = userService.findById(lesson.getTeacherId());
+        if (!user.isPresent()) {
+            throw new BadRequestException();
         }
         Lesson domain = MappingUtils.lessonToDomain(lesson);
+        domain.setTeacher(user.get());
         domain.setId(lessonId);
         domain.setCourseId(id);
         lessonService.update(domain);
-        return ResponseEntity.ok(Collections.singletonMap("lesson", MappingUtils.lessonToDto(domain)));
+        return ResponseEntity.ok(MappingUtils.lessonToDto(domain));
     }
 
-    @RequestMapping(path = "/{id}/lessons/{lessonId}", method = RequestMethod.DELETE)
+    @ApiResponse(
+            responseCode="400",
+            description="Error in the request",
+            content=@Content(mediaType = "application/json", schema=@Schema(implementation = BadRequest.class)))
+    @RequestMapping(path = "/{id}/lessons/{lessonId}", method = RequestMethod.DELETE, produces = "application/json")
     public ResponseEntity<Object> deleteIdLessonsId(@PathVariable Long id,
                                                  @PathVariable Long lessonId) {
         if (!courseService.existsById(id) || !lessonService.existsById(lessonId)) {
-            return ResponseEntity.badRequest().body(error);
+            throw new BadRequestException();
         }
         lessonService.deleteById(lessonId);
         return ResponseEntity.ok(null);
     }
 
-    @RequestMapping(path = "/{id}/students", method = RequestMethod.GET)
-    public ResponseEntity<Object> getIdStudents(@PathVariable Long id,
+    @ApiResponse(
+            responseCode="400",
+            description="Error in the request",
+            content=@Content(mediaType = "application/json", schema=@Schema(implementation = BadRequest.class)))
+    @RequestMapping(path = "/{id}/students", method = RequestMethod.GET, produces = "application/json")
+    public ResponseEntity<List<CourseUserDto>> getIdStudents(@PathVariable Long id,
                                                 @RequestParam(required = false, value = "page") Integer page,
                                                 @RequestParam(required = false, value = "size") Integer size) {
         if (courseService.existsById(id)) {
@@ -197,7 +233,7 @@ public class CoursesController {
                             .map(MappingUtils::courseUserToDto)
                             .collect(Collectors.toList()));
                 } else {
-                    return ResponseEntity.badRequest().body(error);
+                    throw new BadRequestException();
                 }
             }
             return ResponseEntity.ok(userService.findAllStudentsByCourseId(id)
@@ -205,25 +241,33 @@ public class CoursesController {
                     .map(MappingUtils::courseUserToDto)
                     .collect(Collectors.toList()));
         }
-        return ResponseEntity.badRequest().body(error);
+        throw new BadRequestException();
     }
 
-    @RequestMapping(path = "/{id}/students", method = RequestMethod.POST)
-    public ResponseEntity<Object> postIdStudents(@PathVariable Long id, @RequestBody Id studentId) {
+    @ApiResponse(
+            responseCode="400",
+            description="Error in the request",
+            content=@Content(mediaType = "application/json", schema=@Schema(implementation = BadRequest.class)))
+    @RequestMapping(path = "/{id}/students", method = RequestMethod.POST, produces = "application/json")
+    public ResponseEntity<CourseUserDto> postIdStudents(@PathVariable Long id, @RequestBody Id studentId) {
         if (studentId.getId() == null) {
-            return ResponseEntity.badRequest().body(error);
+            throw new BadRequestException();
         }
         Optional<Course> course = courseService.getById(id);
         Optional<User> user = userService.findById(studentId.getId());
         if (course.isPresent() && user.isPresent() && user.get().getRole() == Role.STUDENT) {
             course.get().getStudents().add(user.get());
             courseService.update(course.get());
-            return ResponseEntity.ok(Collections.singletonMap("student", MappingUtils.courseUserToDto(user.get())));
+            return ResponseEntity.ok(MappingUtils.courseUserToDto(user.get()));
         }
-        return ResponseEntity.badRequest().body(error);
+        throw new BadRequestException();
     }
 
-    @RequestMapping(path = "/{id}/students/{studentId}", method = RequestMethod.DELETE)
+    @ApiResponse(
+            responseCode="400",
+            description="Error in the request",
+            content=@Content(mediaType = "application/json", schema=@Schema(implementation = BadRequest.class)))
+    @RequestMapping(path = "/{id}/students/{studentId}", method = RequestMethod.DELETE, produces = "application/json")
     public ResponseEntity<Object> deleteIdStudentsId(@PathVariable Long id,
                                                      @PathVariable Long studentId) {
         Optional<Course> course = courseService.getById(id);
@@ -233,11 +277,15 @@ public class CoursesController {
             courseService.update(course.get());
             return ResponseEntity.ok(null);
         }
-        return ResponseEntity.badRequest().body(error);
+        throw new BadRequestException();
     }
 
-    @RequestMapping(path = "/{id}/teachers", method = RequestMethod.GET)
-    public ResponseEntity<Object> getIdTeachers(@PathVariable Long id,
+    @ApiResponse(
+            responseCode="400",
+            description="Error in the request",
+            content=@Content(mediaType = "application/json", schema=@Schema(implementation = BadRequest.class)))
+    @RequestMapping(path = "/{id}/teachers", method = RequestMethod.GET, produces = "application/json")
+    public ResponseEntity<List<CourseUserDto>> getIdTeachers(@PathVariable Long id,
                                                 @RequestParam(required = false, value = "page") Integer page,
                                                 @RequestParam(required = false, value = "size") Integer size) {
         if (courseService.existsById(id)) {
@@ -249,7 +297,7 @@ public class CoursesController {
                             .map(MappingUtils::courseUserToDto)
                             .collect(Collectors.toList()));
                 } else {
-                    return ResponseEntity.badRequest().body(error);
+                    throw new BadRequestException();
                 }
             }
             return ResponseEntity.ok(userService.findAllTeachersByCourseId(id)
@@ -257,13 +305,17 @@ public class CoursesController {
                     .map(MappingUtils::courseUserToDto)
                     .collect(Collectors.toList()));
         }
-        return ResponseEntity.badRequest().body(error);
+        throw new BadRequestException();
     }
 
-    @RequestMapping(path = "/{id}/teachers", method = RequestMethod.POST)
-    public ResponseEntity<Object> postIdTeachers(@PathVariable Long id, @RequestBody Id teacherId) {
+    @ApiResponse(
+            responseCode="400",
+            description="Error in the request",
+            content=@Content(mediaType = "application/json", schema=@Schema(implementation = BadRequest.class)))
+    @RequestMapping(path = "/{id}/teachers", method = RequestMethod.POST, produces = "application/json")
+    public ResponseEntity<CourseUserDto> postIdTeachers(@PathVariable Long id, @RequestBody Id teacherId) {
         if (teacherId.getId() == null) {
-            return ResponseEntity.badRequest().body(error);
+            throw new BadRequestException();
         }
         Optional<Course> course = courseService.getById(id);
         Optional<User> user = userService.findById(teacherId.getId());
@@ -271,12 +323,16 @@ public class CoursesController {
             course.get().getTeachers().add(user.get());
             courseService.update(course.get());
             return ResponseEntity
-                    .ok(Collections.singletonMap("teacher", MappingUtils.courseUserToDto(user.get())));
+                    .ok(MappingUtils.courseUserToDto(user.get()));
         }
-        return ResponseEntity.badRequest().body(error);
+        throw new BadRequestException();
     }
 
-    @RequestMapping(path = "/{id}/teachers/{teacherId}", method = RequestMethod.DELETE)
+    @ApiResponse(
+            responseCode="400",
+            description="Error in the request",
+            content=@Content(mediaType = "application/json", schema=@Schema(implementation = BadRequest.class)))
+    @RequestMapping(path = "/{id}/teachers/{teacherId}", method = RequestMethod.DELETE, produces = "application/json")
     public ResponseEntity<Object> deleteIdTeachersId(@PathVariable Long id,
                                                      @PathVariable Long teacherId) {
         Optional<Course> course = courseService.getById(id);
@@ -286,6 +342,6 @@ public class CoursesController {
             courseService.update(course.get());
             return ResponseEntity.ok(null);
         }
-        return ResponseEntity.badRequest().body(error);
+        throw new BadRequestException();
     }
 }

@@ -1,8 +1,16 @@
 package edu.school21.restful.dto;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonTypeName;
+import io.swagger.annotations.ApiModelProperty;
+
+@JsonTypeName("error")
+@JsonTypeInfo(include = JsonTypeInfo.As.WRAPPER_OBJECT, use = JsonTypeInfo.Id.NAME)
 public class BadRequest {
     private static volatile BadRequest instance;
+    @ApiModelProperty(example = "400")
     private final int status;
+    @ApiModelProperty(example = "Bad request")
     private final String message;
 
     private BadRequest() {

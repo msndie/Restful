@@ -6,15 +6,15 @@ import edu.school21.restful.model.Lesson;
 import edu.school21.restful.model.User;
 
 public class MappingUtils {
-    public static CourseDtoOut courseToDto(Course course) {
-        return new CourseDtoOut(course.getId(),
+    public static CourseDto courseToDto(Course course) {
+        return new CourseDto(course.getId(),
                 course.getStartDate(),
                 course.getEndDate(),
                 course.getName(),
                 course.getDescription());
     }
 
-    public static Course courseToDomain(CourseDtoIn courseDtoIn) {
+    public static Course courseToDomain(CourseDto courseDtoIn) {
         Course course = new Course();
         course.setDescription(courseDtoIn.getDescription());
         course.setName(courseDtoIn.getName());
@@ -37,7 +37,6 @@ public class MappingUtils {
 
     public static Lesson lessonToDomain(LessonDtoIn lessonDtoIn) {
         Lesson lesson = new Lesson();
-        lesson.setId(lessonDtoIn.getId());
         lesson.setStartTime(lessonDtoIn.getStartTime());
         lesson.setEndTime(lessonDtoIn.getEndTime());
         lesson.setDayOfWeek(lessonDtoIn.getDayOfWeek());
