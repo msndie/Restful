@@ -2,6 +2,7 @@ package edu.school21.restful.model;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import edu.school21.restful.utils.DayOfWeekDeserializer;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -10,6 +11,7 @@ import javax.persistence.*;
 import java.time.DayOfWeek;
 import java.time.LocalTime;
 
+@AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter

@@ -15,12 +15,11 @@ import java.time.LocalTime;
 @ApiModel(value = "lesson")
 @JsonTypeName("lesson")
 @JsonTypeInfo(include = JsonTypeInfo.As.WRAPPER_OBJECT, use = JsonTypeInfo.Id.NAME)
-@ToString
 public class LessonDtoOut {
     private Long id;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "hh:mm")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
     private LocalTime startTime;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "hh:mm")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
     private LocalTime endTime;
     private DayOfWeek dayOfWeek;
     private CourseUserDto teacher;

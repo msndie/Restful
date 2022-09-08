@@ -1,5 +1,6 @@
 package edu.school21.restful.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -10,6 +11,7 @@ import java.time.LocalDate;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+@AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter

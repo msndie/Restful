@@ -63,11 +63,11 @@ public class CoursesController {
                 .collect(Collectors.toList()));
     }
 
+    @PostMapping(produces = "application/json")
     @ApiResponse(
             responseCode="400",
             description="Error in the request",
             content=@Content(mediaType = "application/json", schema=@Schema(implementation = BadRequest.class)))
-    @PostMapping(produces = "application/json")
     public ResponseEntity<CourseDto> post(@RequestBody CourseDto request) {
         if (request.getDescription() == null || request.getName() == null
             || request.getStartDate() == null || request.getEndDate() == null
@@ -144,7 +144,7 @@ public class CoursesController {
                     throw new BadRequestException();
                 }
             }
-            return ResponseEntity.ok(lessonService.findAll()
+            return ResponseEntity.ok(lessonService.findAllByCourseId(id, Pageable.unpaged())
                     .stream()
                     .map(MappingUtils::lessonToDto)
                     .sorted(Comparator.comparingLong(LessonDtoOut::getId))

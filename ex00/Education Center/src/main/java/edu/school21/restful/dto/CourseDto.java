@@ -13,8 +13,8 @@ import java.time.LocalDate;
 @Setter
 @Getter
 @AllArgsConstructor
-@JsonTypeName("course")
-@JsonTypeInfo(include = JsonTypeInfo.As.WRAPPER_OBJECT, use = JsonTypeInfo.Id.NAME)
+//@JsonTypeName("course")
+//@JsonTypeInfo(include = JsonTypeInfo.As.WRAPPER_OBJECT, use = JsonTypeInfo.Id.NAME)
 public class CourseDto {
     @ApiModelProperty(readOnly = true)
     private Long id;
