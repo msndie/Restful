@@ -1,32 +1,23 @@
 package edu.school21.restful;
 
-import edu.school21.restful.dto.CourseDto;
-import edu.school21.restful.dto.CourseUserDto;
 import edu.school21.restful.model.Course;
-import edu.school21.restful.model.Lesson;
 import edu.school21.restful.services.CourseService;
 import edu.school21.restful.services.LessonService;
 import edu.school21.restful.services.UserService;
 import org.hamcrest.Matchers;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 

@@ -2,9 +2,12 @@ package edu.school21.restful.dto;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
 
-public class Id {
+import javax.validation.constraints.Positive;
+
+public class IdRequest {
 
     @JsonAlias({"teacherId", "studentId"})
+    @Positive
     private Long id;
 
     public void setId(Long id) {
