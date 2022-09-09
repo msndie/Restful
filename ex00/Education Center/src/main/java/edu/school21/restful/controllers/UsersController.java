@@ -63,6 +63,7 @@ public class UsersController {
         if (user.isPresent() && user.get().getRole() == userRequest.getRole()) {
             user.get().setFirstName(userRequest.getFirstName());
             user.get().setLastName(userRequest.getLastName());
+            userService.update(user.get());
             return ResponseEntity.ok(MappingUtils.userToDto(user.get()));
         }
         throw new BadRequestException();

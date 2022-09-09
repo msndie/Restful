@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 @Transactional
 @Service
@@ -62,5 +63,15 @@ public class LessonServiceImpl implements LessonService {
     @Override
     public List<Lesson> findAllByCourseId(Long courseId, Pageable pageable) {
         return lessonRepository.findByCourseId(courseId, pageable);
+    }
+
+    @Override
+    public Optional<Lesson> findById(Long id) {
+        return lessonRepository.findById(id);
+    }
+
+    @Override
+    public Optional<Lesson> findByIdAndCourseId(Long id, Long courseId) {
+        return lessonRepository.findByIdAndCourseId(id, courseId);
     }
 }

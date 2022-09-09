@@ -144,12 +144,14 @@ public class CoursesController {
     public ResponseEntity<LessonResponse> putIdLessonsId(@PathVariable Long id,
                                                          @PathVariable Long lessonId,
                                                          @Valid @RequestBody LessonRequest lesson) {
-        if (!courseService.existsById(id) || !lessonService.existsById(lessonId)
+        Optional<Course> course = courseService.getById(id);
+        Optional<Lesson> lessonOptional = lessonService.findById(lessonId);
+        if (!course.isPresent() || !lessonOptional.isPresent()
                 || lesson.getStartTime().isAfter(lesson.getEndTime())) {
             throw new BadRequestException();
         }
         Optional<User> user = userService.findById(lesson.getTeacherId());
-        if (!user.isPresent()) {
+        if (!user.isPresent() || !course.get().getTeachers().contains(user.get())) {
             throw new BadRequestException();
         }
         Lesson domain = MappingUtils.lessonToDomain(lesson);
@@ -163,7 +165,8 @@ public class CoursesController {
     @RequestMapping(path = "/{id}/lessons/{lessonId}", method = RequestMethod.DELETE, produces = "application/json")
     public ResponseEntity<Object> deleteIdLessonsId(@PathVariable Long id,
                                                     @PathVariable Long lessonId) {
-        if (!courseService.existsById(id) || !lessonService.existsById(lessonId)) {
+        Optional<Lesson> lesson = lessonService.findByIdAndCourseId(lessonId, id);
+        if (!lesson.isPresent()) {
             throw new BadRequestException();
         }
         lessonService.deleteById(lessonId);
@@ -212,7 +215,8 @@ public class CoursesController {
                                                      @PathVariable Long studentId) {
         Optional<Course> course = courseService.getById(id);
         Optional<User> user = userService.findById(studentId);
-        if (course.isPresent() && user.isPresent() && user.get().getRole() == Role.STUDENT) {
+        if (course.isPresent() && user.isPresent() && user.get().getRole() == Role.STUDENT
+                && course.get().getStudents().contains(user.get())) {
             course.get().getStudents().remove(user.get());
             courseService.update(course.get());
             return ResponseEntity.ok(null);
@@ -263,7 +267,8 @@ public class CoursesController {
                                                      @PathVariable Long teacherId) {
         Optional<Course> course = courseService.getById(id);
         Optional<User> user = userService.findById(teacherId);
-        if (course.isPresent() && user.isPresent() && user.get().getRole() == Role.TEACHER) {
+        if (course.isPresent() && user.isPresent() && user.get().getRole() == Role.TEACHER
+                && course.get().getTeachers().contains(user.get())) {
             course.get().getTeachers().remove(user.get());
             courseService.update(course.get());
             return ResponseEntity.ok(null);

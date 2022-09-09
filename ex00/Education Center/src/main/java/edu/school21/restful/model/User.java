@@ -48,7 +48,7 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "course_id", referencedColumnName = "id"))
     private Set<Course> coursesAsStudent = new LinkedHashSet<>();
 
-    @OneToMany(mappedBy = "teacher")
+    @OneToMany(mappedBy = "teacher", cascade = CascadeType.REMOVE)
     private Set<Lesson> lessons = new LinkedHashSet<>();
 
     @ManyToMany
