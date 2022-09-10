@@ -71,6 +71,8 @@ class RestfulApplicationTests {
         user.setFirstName("Test");
         user.setLastName("Testoviy");
         user.setRole(Role.STUDENT);
+        user.setLogin("Student1");
+        user.setPassword("qwe");
     }
 
     @Test
@@ -150,7 +152,9 @@ class RestfulApplicationTests {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$['user'].id", Matchers.is(1)))
                 .andExpect(jsonPath("$['user'].firstName", Matchers.is(user.getFirstName())))
-                .andExpect(jsonPath("$['user'].lastName", Matchers.is(user.getLastName())));
+                .andExpect(jsonPath("$['user'].lastName", Matchers.is(user.getLastName())))
+                .andExpect(jsonPath("$['user'].login", Matchers.is(user.getLogin())))
+                .andExpect(jsonPath("$['user'].role", Matchers.is(user.getRole().name())));
     }
 
     @Test
