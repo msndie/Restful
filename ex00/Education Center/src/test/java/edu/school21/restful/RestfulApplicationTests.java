@@ -147,7 +147,10 @@ class RestfulApplicationTests {
         when(userService.findById(1L)).thenReturn(Optional.of(user));
         mockMvc.perform(delete("/users/1"))
 //                .andDo(print())
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$['user'].id", Matchers.is(1)))
+                .andExpect(jsonPath("$['user'].firstName", Matchers.is(user.getFirstName())))
+                .andExpect(jsonPath("$['user'].lastName", Matchers.is(user.getLastName())));
     }
 
     @Test

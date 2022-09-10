@@ -5,7 +5,7 @@ import edu.school21.restful.dto.UserResponse;
 import edu.school21.restful.exception.BadRequestException;
 import edu.school21.restful.model.User;
 import edu.school21.restful.services.UserService;
-import edu.school21.restful.utils.MappingUtils;
+import edu.school21.restful.utils.DtoMapper;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -23,12 +23,12 @@ import java.util.stream.Collectors;
 @RequestMapping("/users")
 public class UsersController {
     private final UserService userService;
-    private final MappingUtils mappingUtils;
+    private final DtoMapper dtoMapper;
 
     @Autowired
-    public UsersController(UserService userService, MappingUtils mappingUtils) {
+    public UsersController(UserService userService, DtoMapper dtoMapper) {
         this.userService = userService;
-        this.mappingUtils = mappingUtils;
+        this.dtoMapper = dtoMapper;
     }
 
     @ApiOperation(value = "Get all users")
@@ -41,7 +41,7 @@ public class UsersController {
                 return ResponseEntity.ok(userService
                         .findAll(pageable)
                         .stream()
-                        .map(mappingUtils::userToDto)
+                        .map(dtoMapper::userToDto)
                         .collect(Collectors.toList()));
             } else {
                 throw new BadRequestException();
@@ -50,16 +50,16 @@ public class UsersController {
         return ResponseEntity.ok(userService
                 .findAll()
                 .stream()
-                .map(mappingUtils::userToDto)
+                .map(dtoMapper::userToDto)
                 .collect(Collectors.toList()));
     }
 
     @ApiOperation(value = "Add new user")
     @PostMapping(produces = "application/json")
     public ResponseEntity<UserResponse> post(@Valid @RequestBody UserRequest userRequest) {
-        User user = mappingUtils.userToDomain(userRequest);
+        User user = dtoMapper.userToDomain(userRequest);
         userService.save(user);
-        return ResponseEntity.ok(mappingUtils.userToDto(user));
+        return ResponseEntity.ok(dtoMapper.userToDto(user));
     }
 
     @ApiOperation(value = "Change user by user ID")
@@ -70,18 +70,18 @@ public class UsersController {
             user.get().setFirstName(userRequest.getFirstName());
             user.get().setLastName(userRequest.getLastName());
             userService.update(user.get());
-            return ResponseEntity.ok(mappingUtils.userToDto(user.get()));
+            return ResponseEntity.ok(dtoMapper.userToDto(user.get()));
         }
         throw new BadRequestException();
     }
 
     @ApiOperation(value = "Delete user by user ID")
     @RequestMapping(path = "/{userId}", method = RequestMethod.DELETE, produces = "application/json")
-    public ResponseEntity<Object> delete(@PathVariable Long userId) {
+    public ResponseEntity<UserResponse> delete(@PathVariable Long userId) {
         Optional<User> user = userService.findById(userId);
         if (user.isPresent()) {
             userService.delete(user.get());
-            return ResponseEntity.ok(null);
+            return ResponseEntity.ok(dtoMapper.userToDto(user.get()));
         }
         throw new BadRequestException();
     }

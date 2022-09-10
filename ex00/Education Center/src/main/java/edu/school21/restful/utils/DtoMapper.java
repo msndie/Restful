@@ -7,7 +7,7 @@ import edu.school21.restful.model.User;
 import org.springframework.stereotype.Component;
 
 @Component
-public class MappingUtils {
+public class DtoMapper {
     public CourseResponse courseToDto(Course course) {
         return new CourseResponse(course.getId(),
                 course.getStartDate(),

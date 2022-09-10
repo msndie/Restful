@@ -6,7 +6,7 @@ import edu.school21.restful.model.*;
 import edu.school21.restful.services.CourseService;
 import edu.school21.restful.services.LessonService;
 import edu.school21.restful.services.UserService;
-import edu.school21.restful.utils.MappingUtils;
+import edu.school21.restful.utils.DtoMapper;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -26,17 +26,17 @@ public class CoursesController {
     private final CourseService courseService;
     private final LessonService lessonService;
     private final UserService userService;
-    private final MappingUtils mappingUtils;
+    private final DtoMapper dtoMapper;
 
     @Autowired
     public CoursesController(CourseService courseService,
                              LessonService lessonService,
                              UserService userService,
-                             MappingUtils mappingUtils) {
+                             DtoMapper dtoMapper) {
         this.courseService = courseService;
         this.lessonService = lessonService;
         this.userService = userService;
-        this.mappingUtils = mappingUtils;
+        this.dtoMapper = dtoMapper;
     }
 
     @ApiOperation(value = "Get all courses")
@@ -49,7 +49,7 @@ public class CoursesController {
                 return ResponseEntity.ok(courseService
                         .findAll(pageable)
                         .stream()
-                        .map(mappingUtils::courseToDto)
+                        .map(dtoMapper::courseToDto)
                         .collect(Collectors.toList()));
             } else {
                 throw new BadRequestException();
@@ -58,7 +58,7 @@ public class CoursesController {
         return ResponseEntity.ok(courseService
                 .findAll()
                 .stream()
-                .map(mappingUtils::courseToDto)
+                .map(dtoMapper::courseToDto)
                 .collect(Collectors.toList()));
     }
 
@@ -68,9 +68,9 @@ public class CoursesController {
         if (request.getStartDate().isAfter(request.getEndDate())) {
             throw new BadRequestException();
         }
-        Course course = mappingUtils.courseToDomain(request);
+        Course course = dtoMapper.courseToDomain(request);
         courseService.save(course);
-        return ResponseEntity.ok(mappingUtils.courseToDto(course));
+        return ResponseEntity.ok(dtoMapper.courseToDto(course));
     }
 
     @ApiOperation(value = "Get course by ID")
@@ -78,7 +78,7 @@ public class CoursesController {
     public ResponseEntity<CourseResponse> getId(@PathVariable Long id) {
         Optional<Course> course = courseService.getById(id);
         if (course.isPresent()) {
-            return ResponseEntity.ok(mappingUtils.courseToDto(course.get()));
+            return ResponseEntity.ok(dtoMapper.courseToDto(course.get()));
         } else {
             throw new BadRequestException();
         }
@@ -91,18 +91,19 @@ public class CoursesController {
         if (course.getStartDate().isAfter(course.getEndDate()) || !courseService.existsById(id)) {
             throw new BadRequestException();
         }
-        Course domain = mappingUtils.courseToDomain(course);
+        Course domain = dtoMapper.courseToDomain(course);
         domain.setId(id);
         courseService.update(domain);
-        return ResponseEntity.ok(mappingUtils.courseToDto(domain));
+        return ResponseEntity.ok(dtoMapper.courseToDto(domain));
     }
 
     @ApiOperation(value = "Delete course by ID")
     @RequestMapping(path = "/{id}", method = RequestMethod.DELETE, produces = "application/json")
-    public ResponseEntity<Object> deleteId(@PathVariable Long id) {
-        if (courseService.existsById(id)) {
+    public ResponseEntity<CourseResponse> deleteId(@PathVariable Long id) {
+        Optional<Course> course = courseService.getById(id);
+        if (course.isPresent()) {
             courseService.deleteById(id);
-            return ResponseEntity.ok(null);
+            return ResponseEntity.ok(dtoMapper.courseToDto(course.get()));
         }
         throw new BadRequestException();
     }
@@ -118,7 +119,7 @@ public class CoursesController {
                     Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.asc("id")));
                     return ResponseEntity.ok(lessonService.findAllByCourseId(id, pageable)
                             .stream()
-                            .map(mappingUtils::lessonToDto)
+                            .map(dtoMapper::lessonToDto)
                             .collect(Collectors.toList()));
                 } else {
                     throw new BadRequestException();
@@ -126,7 +127,7 @@ public class CoursesController {
             }
             return ResponseEntity.ok(lessonService.findAllByCourseId(id, Pageable.unpaged())
                     .stream()
-                    .map(mappingUtils::lessonToDto)
+                    .map(dtoMapper::lessonToDto)
                     .sorted(Comparator.comparingLong(LessonResponse::getId))
                     .collect(Collectors.toList()));
         }
@@ -142,11 +143,11 @@ public class CoursesController {
         if (course.isPresent() && user.isPresent() && user.get().getRole() == Role.TEACHER
                 && course.get().getTeachers().contains(user.get())
                 && lesson.getStartTime().isBefore(lesson.getEndTime())) {
-            Lesson domain = mappingUtils.lessonToDomain(lesson);
+            Lesson domain = dtoMapper.lessonToDomain(lesson);
             domain.setCourseId(id);
             domain.setTeacher(user.get());
             lessonService.save(domain);
-            return ResponseEntity.ok(mappingUtils.lessonToDto(domain));
+            return ResponseEntity.ok(dtoMapper.lessonToDto(domain));
         }
         throw new BadRequestException();
     }
@@ -166,24 +167,24 @@ public class CoursesController {
         if (!user.isPresent() || !course.get().getTeachers().contains(user.get())) {
             throw new BadRequestException();
         }
-        Lesson domain = mappingUtils.lessonToDomain(lesson);
+        Lesson domain = dtoMapper.lessonToDomain(lesson);
         domain.setTeacher(user.get());
         domain.setId(lessonId);
         domain.setCourseId(id);
         lessonService.update(domain);
-        return ResponseEntity.ok(mappingUtils.lessonToDto(domain));
+        return ResponseEntity.ok(dtoMapper.lessonToDto(domain));
     }
 
     @ApiOperation(value = "Delete lesson in selected course by lesson ID")
     @RequestMapping(path = "/{id}/lessons/{lessonId}", method = RequestMethod.DELETE, produces = "application/json")
-    public ResponseEntity<Object> deleteIdLessonsId(@PathVariable Long id,
+    public ResponseEntity<LessonResponse> deleteIdLessonsId(@PathVariable Long id,
                                                     @PathVariable Long lessonId) {
         Optional<Lesson> lesson = lessonService.findByIdAndCourseId(lessonId, id);
         if (!lesson.isPresent()) {
             throw new BadRequestException();
         }
         lessonService.deleteById(lessonId);
-        return ResponseEntity.ok(null);
+        return ResponseEntity.ok(dtoMapper.lessonToDto(lesson.get()));
     }
 
     @ApiOperation(value = "Get all course students")
@@ -197,7 +198,7 @@ public class CoursesController {
                     Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.asc("id")));
                     return ResponseEntity.ok(userService.findAllStudentsByCourseId(id, pageable)
                             .stream()
-                            .map(mappingUtils::courseUserToDto)
+                            .map(dtoMapper::courseUserToDto)
                             .collect(Collectors.toList()));
                 } else {
                     throw new BadRequestException();
@@ -205,7 +206,7 @@ public class CoursesController {
             }
             return ResponseEntity.ok(userService.findAllStudentsByCourseId(id)
                     .stream()
-                    .map(mappingUtils::courseUserToDto)
+                    .map(dtoMapper::courseUserToDto)
                     .collect(Collectors.toList()));
         }
         throw new BadRequestException();
@@ -220,14 +221,14 @@ public class CoursesController {
         if (course.isPresent() && user.isPresent() && user.get().getRole() == Role.STUDENT) {
             course.get().getStudents().add(user.get());
             courseService.update(course.get());
-            return ResponseEntity.ok(mappingUtils.courseUserToDto(user.get()));
+            return ResponseEntity.ok(dtoMapper.courseUserToDto(user.get()));
         }
         throw new BadRequestException();
     }
 
     @ApiOperation(value = "Delete student from course")
     @RequestMapping(path = "/{id}/students/{studentId}", method = RequestMethod.DELETE, produces = "application/json")
-    public ResponseEntity<Object> deleteIdStudentsId(@PathVariable Long id,
+    public ResponseEntity<CourseUserResponse> deleteIdStudentsId(@PathVariable Long id,
                                                      @PathVariable Long studentId) {
         Optional<Course> course = courseService.getById(id);
         Optional<User> user = userService.findById(studentId);
@@ -235,7 +236,7 @@ public class CoursesController {
                 && course.get().getStudents().contains(user.get())) {
             course.get().getStudents().remove(user.get());
             courseService.update(course.get());
-            return ResponseEntity.ok(null);
+            return ResponseEntity.ok(dtoMapper.courseUserToDto(user.get()));
         }
         throw new BadRequestException();
     }
@@ -251,7 +252,7 @@ public class CoursesController {
                     Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.asc("id")));
                     return ResponseEntity.ok(userService.findAllTeachersByCourseId(id, pageable)
                             .stream()
-                            .map(mappingUtils::courseUserToDto)
+                            .map(dtoMapper::courseUserToDto)
                             .collect(Collectors.toList()));
                 } else {
                     throw new BadRequestException();
@@ -259,7 +260,7 @@ public class CoursesController {
             }
             return ResponseEntity.ok(userService.findAllTeachersByCourseId(id)
                     .stream()
-                    .map(mappingUtils::courseUserToDto)
+                    .map(dtoMapper::courseUserToDto)
                     .collect(Collectors.toList()));
         }
         throw new BadRequestException();
@@ -275,14 +276,14 @@ public class CoursesController {
             course.get().getTeachers().add(user.get());
             courseService.update(course.get());
             return ResponseEntity
-                    .ok(mappingUtils.courseUserToDto(user.get()));
+                    .ok(dtoMapper.courseUserToDto(user.get()));
         }
         throw new BadRequestException();
     }
 
     @ApiOperation(value = "Delete teacher from course")
     @RequestMapping(path = "/{id}/teachers/{teacherId}", method = RequestMethod.DELETE, produces = "application/json")
-    public ResponseEntity<Object> deleteIdTeachersId(@PathVariable Long id,
+    public ResponseEntity<CourseUserResponse> deleteIdTeachersId(@PathVariable Long id,
                                                      @PathVariable Long teacherId) {
         Optional<Course> course = courseService.getById(id);
         Optional<User> user = userService.findById(teacherId);
@@ -290,7 +291,7 @@ public class CoursesController {
                 && course.get().getTeachers().contains(user.get())) {
             course.get().getTeachers().remove(user.get());
             courseService.update(course.get());
-            return ResponseEntity.ok(null);
+            return ResponseEntity.ok(dtoMapper.courseUserToDto(user.get()));
         }
         throw new BadRequestException();
     }
