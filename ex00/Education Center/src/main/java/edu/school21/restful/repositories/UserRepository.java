@@ -10,6 +10,7 @@ import java.util.List;
 
 @Repository
 public interface UserRepository extends PagingAndSortingRepository<User, Long> {
+    boolean existsByLogin(String login);
     boolean existsByIdAndRole(Long id, Role role);
     List<User> findByCoursesAsStudent_Id(Long id, Pageable pageable);
     List<User> findByCoursesAsTeacher_Id(Long id, Pageable pageable);

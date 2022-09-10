@@ -62,6 +62,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public boolean existsByLogin(String login) {
+        return userRepository.existsByLogin(login);
+    }
+
+    @Override
     public boolean existsByIdAndRole(Long id, Role role) {
         return userRepository.existsByIdAndRole(id, role);
     }

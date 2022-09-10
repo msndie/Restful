@@ -57,6 +57,9 @@ public class UsersController {
     @ApiOperation(value = "Add new user")
     @PostMapping(produces = "application/json")
     public ResponseEntity<UserResponse> post(@Valid @RequestBody UserRequest userRequest) {
+        if (userService.existsByLogin(userRequest.getLogin())) {
+            throw new BadRequestException();
+        }
         User user = dtoMapper.userToDomain(userRequest);
         userService.save(user);
         return ResponseEntity.ok(dtoMapper.userToDto(user));
@@ -69,6 +72,8 @@ public class UsersController {
         if (user.isPresent() && user.get().getRole() == userRequest.getRole()) {
             user.get().setFirstName(userRequest.getFirstName());
             user.get().setLastName(userRequest.getLastName());
+            user.get().setLogin(userRequest.getLogin());
+            user.get().setPassword(userRequest.getPassword());
             userService.update(user.get());
             return ResponseEntity.ok(dtoMapper.userToDto(user.get()));
         }

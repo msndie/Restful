@@ -34,11 +34,11 @@ public class User {
     @Column(name = "role", nullable = false)
     private Role role;
 
-    @Column(name = "login")
+    @Column(name = "login", nullable = false, unique = true)
     @Type(type = "org.hibernate.type.TextType")
     private String login;
 
-    @Column(name = "password")
+    @Column(name = "password", nullable = false)
     @Type(type = "org.hibernate.type.TextType")
     private String password;
 

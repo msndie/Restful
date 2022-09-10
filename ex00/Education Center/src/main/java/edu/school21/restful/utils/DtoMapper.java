@@ -46,11 +46,17 @@ public class DtoMapper {
     }
 
     public UserResponse userToDto(User user) {
-        return new UserResponse(user.getId(), user.getFirstName(), user.getLastName(), user.getRole());
+        return new UserResponse(user.getId(),
+                user.getFirstName(),
+                user.getLastName(),
+                user.getLogin(),
+                user.getRole());
     }
 
     public User userToDomain(UserRequest userRequest) {
         User user = new User();
+        user.setLogin(userRequest.getLogin());
+        user.setPassword(userRequest.getPassword());
         user.setRole(userRequest.getRole());
         user.setFirstName(userRequest.getFirstName());
         user.setLastName(userRequest.getLastName());

@@ -7,8 +7,8 @@ CREATE TABLE IF NOT EXISTS users (
     first_name TEXT NOT NULL,
     last_name  TEXT NOT NULL,
     role       TEXT NOT NULL,
-    login      TEXT,
-    password   TEXT
+    login      TEXT NOT NULL UNIQUE,
+    password   TEXT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS courses (

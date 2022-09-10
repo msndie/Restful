@@ -21,4 +21,8 @@ public class UserRequest {
     @NotNull
     @JsonDeserialize(using = RoleDeserializer.class)
     private Role role;
+    @NotBlank
+    private String login;
+    @NotBlank
+    private String password;
 }

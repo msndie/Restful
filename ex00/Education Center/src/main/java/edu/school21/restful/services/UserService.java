@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserService extends Service<User> {
+    boolean existsByLogin(String login);
     boolean existsByIdAndRole(Long id, Role role);
     Optional<User> findById(Long id);
     List<User> findAllStudentsByCourseId(Long courseId, Pageable pageable);

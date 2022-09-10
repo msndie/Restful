@@ -1,11 +1,11 @@
-INSERT INTO users (id, first_name, last_name, role)
+INSERT INTO users (id, first_name, last_name, role, login, password)
 VALUES
-       (1, 'Teacher', 'One', 'TEACHER'),
-       (2, 'Teacher', 'Two', 'TEACHER'),
-       (3, 'Teacher', 'Three', 'TEACHER'),
-       (4, 'Student', 'One', 'STUDENT'),
-       (5, 'Student', 'Two', 'STUDENT'),
-       (6, 'Student', 'Three', 'STUDENT')
+       (1, 'Teacher', 'One', 'TEACHER', 'teacher1', 'qwe'),
+       (2, 'Teacher', 'Two', 'TEACHER', 'teacher2', 'qwe'),
+       (3, 'Teacher', 'Three', 'TEACHER', 'teacher3', 'qwe'),
+       (4, 'Student', 'One', 'STUDENT', 'student1', 'qwe'),
+       (5, 'Student', 'Two', 'STUDENT', 'student2', 'qwe'),
+       (6, 'Student', 'Three', 'STUDENT', 'student3', 'qwe')
 ON CONFLICT DO NOTHING;
 
 INSERT INTO courses (id, start_date, end_date, name, description)
