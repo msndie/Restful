@@ -83,6 +83,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public Optional<User> findByLogin(String login) {
+        return userRepository.findByLogin(login);
+    }
+
+    @Override
     public List<User> findAllStudentsByCourseId(Long courseId, Pageable pageable) {
         return userRepository.findByCoursesAsStudent_Id(courseId, pageable);
     }

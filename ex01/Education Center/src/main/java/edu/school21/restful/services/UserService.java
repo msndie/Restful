@@ -11,6 +11,7 @@ public interface UserService extends Service<User> {
     boolean existsByLogin(String login);
     boolean existsByIdAndRole(Long id, Role role);
     Optional<User> findById(Long id);
+    Optional<User> findByLogin(String login);
     List<User> findAllStudentsByCourseId(Long courseId, Pageable pageable);
     List<User> findAllTeachersByCourseId(Long courseId, Pageable pageable);
     List<User> findAllStudentsByCourseId(Long courseId);
