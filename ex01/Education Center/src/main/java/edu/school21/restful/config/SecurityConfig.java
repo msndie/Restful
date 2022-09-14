@@ -4,8 +4,7 @@ import com.nimbusds.jose.jwk.source.ImmutableSecret;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 import edu.school21.restful.model.Role;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import io.jsonwebtoken.lang.Assert;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,17 +31,12 @@ import java.security.NoSuchAlgorithmException;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    private final Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
-
     @Value("${jwt.secret}")
     private String secret;
 
     @Bean
     public SecretKeySpec key() throws NoSuchAlgorithmException, InvalidKeyException {
-        if (secret.length() < 32) {
-            logger.error("The secret length must be at least 32 symbols");
-            throw new RuntimeException("The secret length must be at least 32 symbols");
-        }
+        Assert.isTrue(secret.length() >= 32, "The secret length must be at least 32 symbols");
         Mac sha256 = Mac.getInstance("HmacSHA256");
         SecretKeySpec secretKey = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
         sha256.init(secretKey);
@@ -65,15 +59,11 @@ public class SecurityConfig {
                                 "/v3/api-docs",
                                 "/v2/api-docs",
                                 "/webjars/**",
-                                "/swagger-ui/**")
-                        .permitAll()
+                                "/swagger-ui/**").permitAll()
                         .antMatchers("/signUp").not().authenticated()
-                        .mvcMatchers(HttpMethod.DELETE, "/courses/**").hasAuthority(Role.ADMINISTRATOR.name())
-                        .mvcMatchers(HttpMethod.POST, "/courses/**").hasAuthority(Role.ADMINISTRATOR.name())
-                        .mvcMatchers(HttpMethod.PUT, "/courses/**").hasAuthority(Role.ADMINISTRATOR.name())
-                        .mvcMatchers(HttpMethod.DELETE, "/users/**").hasAuthority(Role.ADMINISTRATOR.name())
-                        .mvcMatchers(HttpMethod.POST, "/users/**").hasAuthority(Role.ADMINISTRATOR.name())
-                        .mvcMatchers(HttpMethod.PUT, "/users/**").hasAuthority(Role.ADMINISTRATOR.name())
+                        .mvcMatchers(HttpMethod.DELETE, "/courses/**", "/users/**").hasAuthority(Role.ADMINISTRATOR.name())
+                        .mvcMatchers(HttpMethod.POST, "/courses/**", "/users/**").hasAuthority(Role.ADMINISTRATOR.name())
+                        .mvcMatchers(HttpMethod.PUT, "/courses/**", "/users/**").hasAuthority(Role.ADMINISTRATOR.name())
                         .anyRequest().hasAnyAuthority(Role.STUDENT.name(), Role.ADMINISTRATOR.name(), Role.TEACHER.name())
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
