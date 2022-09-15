@@ -1,4 +1,4 @@
-# Restful
+# Restful (ex00 and ex01 ready, currently working on ex02, which requires use of Spring-data-rest)
 <details>
 <summary>Screenshots</summary>
 <img src="/screenshots/schema.png">
