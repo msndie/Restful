@@ -44,6 +44,7 @@ public class User {
 
     @ManyToMany
     @JoinTable(name = "course_students",
+            schema = "ex01",
             joinColumns = @JoinColumn(name = "student_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "course_id", referencedColumnName = "id"))
     private Set<Course> coursesAsStudent = new LinkedHashSet<>();
@@ -53,6 +54,7 @@ public class User {
 
     @ManyToMany
     @JoinTable(name = "course_teachers",
+            schema = "ex01",
             joinColumns = @JoinColumn(name = "teacher_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "course_id", referencedColumnName = "id"))
     private Set<Course> coursesAsTeacher = new LinkedHashSet<>();

@@ -39,6 +39,7 @@ public class Course {
 
     @ManyToMany
     @JoinTable(name = "course_students",
+            schema = "ex01",
             joinColumns = @JoinColumn(name = "course_id"),
             inverseJoinColumns = @JoinColumn(name = "student_id"))
     private Set<User> students = new LinkedHashSet<>();
@@ -48,6 +49,7 @@ public class Course {
 
     @ManyToMany
     @JoinTable(name = "course_teachers",
+            schema = "ex01",
             joinColumns = @JoinColumn(name = "course_id"),
             inverseJoinColumns = @JoinColumn(name = "teacher_id"))
     private Set<User> teachers = new LinkedHashSet<>();
