@@ -6,7 +6,6 @@ import edu.school21.restful.model.User;
 import edu.school21.restful.services.CourseService;
 import edu.school21.restful.services.LessonService;
 import edu.school21.restful.services.UserService;
-import org.checkerframework.checker.nullness.Opt;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -54,7 +53,6 @@ class RestfulApplicationTests {
 
     private static Course course;
     private static User user;
-    private static DateTimeFormatter fmtForDate;
     private static User teacher;
     private static User admin;
     private String tokenTeacher;
@@ -62,7 +60,7 @@ class RestfulApplicationTests {
 
     @BeforeAll
     public static void beforeAll() {
-        fmtForDate = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        DateTimeFormatter fmtForDate = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         LocalDate start = LocalDate.parse("26/02/2022", fmtForDate);
         LocalDate end = LocalDate.parse("01/03/2022", fmtForDate);
         course = new Course(1L,
@@ -126,7 +124,7 @@ class RestfulApplicationTests {
                 .collect(Collectors.toList()));
         mockMvc.perform(get("/courses")
                         .header("Authorization", "Bearer " + tokenTeacher))
-//                .andDo(print())
+                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()", Matchers.is(1)))
                 .andExpect(jsonPath("$[0]['course'].id", Matchers.is(1)))
@@ -141,7 +139,7 @@ class RestfulApplicationTests {
         when(courseService.getById(1L)).thenReturn(Optional.of(course));
         mockMvc.perform(get("/courses/1")
                         .header("Authorization", "Bearer " + tokenTeacher))
-//                .andDo(print())
+                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$['course'].id", Matchers.is(1)))
                 .andExpect(jsonPath("$['course'].startDate", Matchers.is("26/02/2022")))
@@ -157,7 +155,7 @@ class RestfulApplicationTests {
         mockMvc.perform(post("/courses/1/students")
                         .content("{\"id\":1}").contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer " + tokenAdmin))
-//                .andDo(print())
+                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$['user'].id", Matchers.is(1)))
                 .andExpect(jsonPath("$['user'].firstName", Matchers.is("Test")))
@@ -166,8 +164,6 @@ class RestfulApplicationTests {
 
     @Test
     void putCourseById() throws Exception {
-        LocalDate start = LocalDate.parse("25/02/2022", fmtForDate);
-        LocalDate end = LocalDate.parse("05/03/2022", fmtForDate);
         when(courseService.existsById(1L)).thenReturn(true);
         mockMvc.perform(put("/courses/1").contentType(MediaType.APPLICATION_JSON)
                 .content("{\"startDate\":\"25/02/2022\"," +
@@ -175,7 +171,7 @@ class RestfulApplicationTests {
                         "\"name\":\"Changed\"," +
                         "\"description\":\"Changed course\"}")
                         .header("Authorization", "Bearer " + tokenAdmin))
-//                .andDo(print())
+                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$['course'].id", Matchers.is(1)))
                 .andExpect(jsonPath("$['course'].startDate", Matchers.is("25/02/2022")))
@@ -190,7 +186,7 @@ class RestfulApplicationTests {
         when(userService.findById(1L)).thenReturn(Optional.of(user));
         mockMvc.perform(delete("/users/1")
                         .header("Authorization", "Bearer " + tokenAdmin))
-//                .andDo(print())
+                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$['user'].id", Matchers.is(1)))
                 .andExpect(jsonPath("$['user'].firstName", Matchers.is(user.getFirstName())))
@@ -222,9 +218,52 @@ class RestfulApplicationTests {
     }
 
     @Test
-    void shouldReturnError() throws Exception {
+    void shouldReturnUnauthorized() throws Exception {
         mockMvc.perform(get("/courses"))
                 .andExpect(status().isUnauthorized());
+        mockMvc.perform(get("/courses/1"))
+                .andExpect(status().isUnauthorized());
+        mockMvc.perform(get("/courses/1/lessons"))
+                .andExpect(status().isUnauthorized());
+        mockMvc.perform(get("/courses/1/students"))
+                .andExpect(status().isUnauthorized());
+        mockMvc.perform(get("/courses/1/teachers"))
+                .andExpect(status().isUnauthorized());
+        mockMvc.perform(get("/users"))
+                .andExpect(status().isUnauthorized());
+
+        mockMvc.perform(post("/courses"))
+                .andExpect(status().isUnauthorized());
+        mockMvc.perform(post("/courses/1/lessons"))
+                .andExpect(status().isUnauthorized());
+        mockMvc.perform(post("/courses/1/students"))
+                .andExpect(status().isUnauthorized());
+        mockMvc.perform(post("/courses/1/teachers"))
+                .andExpect(status().isUnauthorized());
+        mockMvc.perform(post("/users"))
+                .andExpect(status().isUnauthorized());
+
+        mockMvc.perform(put("/courses/1"))
+                .andExpect(status().isUnauthorized());
+        mockMvc.perform(put("/courses/1/lessons/1"))
+                .andExpect(status().isUnauthorized());
+        mockMvc.perform(get("/users/1"))
+                .andExpect(status().isUnauthorized());
+
+        mockMvc.perform(delete("/courses/1"))
+                .andExpect(status().isUnauthorized());
+        mockMvc.perform(delete("/courses/1/lessons/1"))
+                .andExpect(status().isUnauthorized());
+        mockMvc.perform(delete("/courses/1/students/1"))
+                .andExpect(status().isUnauthorized());
+        mockMvc.perform(delete("/courses/1/teachers/1"))
+                .andExpect(status().isUnauthorized());
+        mockMvc.perform(delete("/users/1"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void shouldReturnErrorPagination() throws Exception {
         mockMvc.perform(get("/courses?page=-1&size=0")
                         .header("Authorization", "Bearer " + tokenTeacher))
                 .andExpect(status().isBadRequest())
