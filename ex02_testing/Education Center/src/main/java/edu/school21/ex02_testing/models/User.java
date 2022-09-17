@@ -3,6 +3,7 @@ package edu.school21.ex02_testing.models;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import edu.school21.ex02_testing.utils.RoleDeserializer;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -19,6 +20,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
+    @ApiModelProperty(hidden = true)
     private Long id;
 
     @Column(name = "first_name", nullable = false)

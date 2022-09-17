@@ -1,6 +1,7 @@
 package edu.school21.ex02_testing.models;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -20,6 +21,7 @@ public class Course {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
+    @ApiModelProperty(hidden = true)
     private Long id;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
@@ -38,6 +40,7 @@ public class Course {
     @Type(type = "org.hibernate.type.TextType")
     private String description;
 
+    @ApiModelProperty(hidden = true)
     @ManyToMany
     @JoinTable(name = "course_students",
             schema = "ex02_testing",
@@ -45,10 +48,12 @@ public class Course {
             inverseJoinColumns = @JoinColumn(name = "student_id"))
     private Set<User> students = new LinkedHashSet<>();
 
+    @ApiModelProperty(hidden = true)
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
     @JoinColumn(name = "course_id")
     private Set<Lesson> lessons = new LinkedHashSet<>();
 
+    @ApiModelProperty(hidden = true)
     @ManyToMany
     @JoinTable(name = "course_teachers",
             schema = "ex02_testing",
