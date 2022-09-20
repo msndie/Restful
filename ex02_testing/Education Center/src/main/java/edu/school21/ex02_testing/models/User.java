@@ -12,10 +12,8 @@ import org.hibernate.annotations.Type;
 import javax.persistence.*;
 
 @NoArgsConstructor
-@Getter
-@Setter
-@Entity
-@Table(name = "users", schema = "ex02_testing")
+@Getter @Setter
+@Entity @Table(name = "users", schema = "ex02_testing")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

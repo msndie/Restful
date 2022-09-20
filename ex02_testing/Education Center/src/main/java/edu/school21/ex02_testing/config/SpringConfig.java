@@ -13,7 +13,6 @@ public class SpringConfig {
     public Docket api(TypeResolver typeResolver) {
         return new Docket(DocumentationType.OAS_30)
                 .select()
-//                .apis(RequestHandlerSelectors.basePackage("edu.school21.restful.controllers"))
                 .paths(PathSelectors.any())
                 .build();
     }

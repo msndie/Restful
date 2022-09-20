@@ -12,13 +12,13 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 
 @Configuration
 public class RestConfig implements RepositoryRestConfigurer {
-    @Override
-    public void configureRepositoryRestConfiguration(RepositoryRestConfiguration config, CorsRegistry cors) {
-        ExposureConfiguration configuration = config.getExposureConfiguration();
-        configuration.forDomainType(Course.class).disablePutForCreation();
-        configuration.forDomainType(User.class).disablePutForCreation();
-        configuration.forDomainType(Lesson.class).disablePutForCreation();
-        configuration.withItemExposure(((metadata, httpMethods) -> httpMethods.disable(HttpMethod.PATCH)));
-        configuration.disablePatchOnItemResources();
-    }
+//    @Override
+//    public void configureRepositoryRestConfiguration(RepositoryRestConfiguration config, CorsRegistry cors) {
+//        ExposureConfiguration configuration = config.getExposureConfiguration();
+//        configuration.forDomainType(Course.class).disablePutForCreation();
+//        configuration.forDomainType(User.class).disablePutForCreation();
+//        configuration.forDomainType(Lesson.class).disablePutForCreation();
+//        configuration.withItemExposure(((metadata, httpMethods) -> httpMethods.disable(HttpMethod.PATCH)));
+//        configuration.disablePatchOnItemResources();
+//    }
 }

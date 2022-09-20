@@ -1,6 +1,7 @@
 package edu.school21.ex02_testing.models;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,10 +14,8 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 @NoArgsConstructor
-@Getter
-@Setter
-@Entity
-@Table(name = "courses", schema = "ex02_testing")
+@Getter @Setter
+@Entity @Table(name = "courses", schema = "ex02_testing")
 public class Course {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,6 +39,11 @@ public class Course {
     @Type(type = "org.hibernate.type.TextType")
     private String description;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "state", nullable = false)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private CourseState state;
+
     @ApiModelProperty(hidden = true)
     @ManyToMany
     @JoinTable(name = "course_students",
@@ -50,7 +54,7 @@ public class Course {
 
     @ApiModelProperty(hidden = true)
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
-    @JoinColumn(name = "course_id")
+    @JoinColumn(name = "course_id", updatable = false)
     private Set<Lesson> lessons = new LinkedHashSet<>();
 
     @ApiModelProperty(hidden = true)

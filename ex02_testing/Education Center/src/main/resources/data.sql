@@ -10,11 +10,11 @@ VALUES
        (7, 'Admin', 'Adminskiy', 'ADMINISTRATOR', 'admin', '$2a$12$NZ5.MRdSch5OHENQwssQieieIjwI0ao7et0Ql0tVosLn26SedeBaW')
 ON CONFLICT DO NOTHING;
 
-INSERT INTO ex02_testing.courses (id, start_date, end_date, name, description)
+INSERT INTO ex02_testing.courses (id, start_date, end_date, name, description, state)
 VALUES
-       (1, '2022-10-01', '2022-10-10', 'First course', 'First test course'),
-       (2, '2022-10-11', '2022-10-20', 'Second course', 'Second test course'),
-       (3, '2022-10-21', '2022-10-30', 'Third course', 'Third test course')
+       (1, '2022-10-01', '2022-10-10', 'First course', 'First test course', 'DRAFT'),
+       (2, '2022-10-11', '2022-10-20', 'Second course', 'Second test course', 'PUBLISHED'),
+       (3, '2022-10-21', '2022-10-30', 'Third course', 'Third test course', 'DRAFT')
 ON CONFLICT DO NOTHING;
 
 INSERT INTO ex02_testing.lessons (id, teacher_id, course_id, start_time, end_time, day_of_week)

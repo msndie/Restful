@@ -5,14 +5,12 @@ import edu.school21.restful.dto.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import springfox.documentation.builders.*;
 import springfox.documentation.service.*;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spi.service.contexts.SecurityContext;
 import springfox.documentation.spring.web.plugins.Docket;
-import springfox.documentation.swagger.web.SecurityConfiguration;
 
 import java.util.*;
 
@@ -32,7 +30,6 @@ public class SpringConfig {
         listForElse.add(response403);
         return new Docket(DocumentationType.OAS_30)
                 .securityContexts(Collections.singletonList(securityContext()))
-//                .securitySchemes(Collections.singletonList(apiKey()))
                 .securitySchemes(Collections.singletonList(jwtScheme()))
                 .additionalModels(typeResolver.resolve(BadRequest.class))
                 .useDefaultResponseMessages(false)
@@ -65,21 +62,4 @@ public class SpringConfig {
                 .reference("JWT")
                 .build();
     }
-
-//    private SecurityContext securityContext() {
-//        return SecurityContext.builder().securityReferences(defaultAuth()).build();
-//    }
-//
-//    private List<SecurityReference> defaultAuth() {
-//        AuthorizationScope authorizationScope = new AuthorizationScope("global", "accessEverything");
-//        AuthorizationScope[] authorizationScopes = new AuthorizationScope[1];
-//        authorizationScopes[0] = authorizationScope;
-//        return Collections.singletonList(new SecurityReference("JWT", authorizationScopes));
-//    }
-////
-////    @Bean
-//    public ApiKey apiKey() {
-////        (Don't forget to add "Bearer" at the beginning)
-//        return new ApiKey("JWT", "Authorization", "header");
-//    }
 }
