@@ -1,5 +1,5 @@
 -- ADMIN PASS 123QWEasd
-INSERT INTO ex02.users (id, first_name, last_name, role, login, password)
+INSERT INTO ex02_testing.users (id, first_name, last_name, role, login, password)
 VALUES
        (1, 'Teacher', 'One', 'TEACHER', 'teacher1', '$2a$12$sf6UB4Ia1WBmKQg9FYn7H.ZiJXMmgrvmXiD8Auxic.UMirWlzE5wi'),
        (2, 'Teacher', 'Two', 'TEACHER', 'teacher2', '$2a$12$sf6UB4Ia1WBmKQg9FYn7H.ZiJXMmgrvmXiD8Auxic.UMirWlzE5wi'),
@@ -10,28 +10,28 @@ VALUES
        (7, 'Admin', 'Adminskiy', 'ADMINISTRATOR', 'admin', '$2a$12$NZ5.MRdSch5OHENQwssQieieIjwI0ao7et0Ql0tVosLn26SedeBaW')
 ON CONFLICT DO NOTHING;
 
-INSERT INTO ex02.courses (id, start_date, end_date, name, description)
+INSERT INTO ex02_testing.courses (id, start_date, end_date, name, description, state)
 VALUES
-       (1, '2022-10-01', '2022-10-10', 'First course', 'First test course'),
-       (2, '2022-10-11', '2022-10-20', 'Second course', 'Second test course'),
-       (3, '2022-10-21', '2022-10-30', 'Third course', 'Third test course')
+       (1, '2022-10-01', '2022-10-10', 'First course', 'First test course', 'DRAFT'),
+       (2, '2022-10-11', '2022-10-20', 'Second course', 'Second test course', 'PUBLISHED'),
+       (3, '2022-10-21', '2022-10-30', 'Third course', 'Third test course', 'DRAFT')
 ON CONFLICT DO NOTHING;
 
-INSERT INTO ex02.lessons (id, teacher_id, course_id, start_time, end_time, day_of_week)
+INSERT INTO ex02_testing.lessons (id, teacher_id, course_id, start_time, end_time, day_of_week)
 VALUES
        (1, 1, 1, '10:00:00', '11:00:00', 'MONDAY'),
        (2, 2, 2, '10:00:00', '11:00:00', 'TUESDAY'),
        (3, 3, 3, '10:00:00', '11:00:00', 'WEDNESDAY')
 ON CONFLICT DO NOTHING;
 
-INSERT INTO ex02.course_students (student_id, course_id)
+INSERT INTO ex02_testing.course_students (student_id, course_id)
 VALUES
        (4, 1),
        (5, 2),
        (6, 3)
 ON CONFLICT DO NOTHING;
 
-INSERT INTO ex02.course_teachers (teacher_id, course_id)
+INSERT INTO ex02_testing.course_teachers (teacher_id, course_id)
 VALUES
        (1, 1),
        (2, 2),
