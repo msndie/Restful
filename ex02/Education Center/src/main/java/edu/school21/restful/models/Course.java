@@ -2,6 +2,7 @@ package edu.school21.restful.models;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,7 +13,7 @@ import java.time.LocalDate;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-@NoArgsConstructor
+@NoArgsConstructor @AllArgsConstructor
 @Getter @Setter
 @Entity @Table(name = "courses", schema = "ex02_testing")
 public class Course {

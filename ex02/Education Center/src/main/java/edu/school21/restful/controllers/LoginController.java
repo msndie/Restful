@@ -9,15 +9,12 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -29,17 +26,14 @@ public class LoginController {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    @PostMapping(value = "/signUp", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> token(@Valid @RequestBody SignUpRequest signUpRequest) {
+    @PostMapping(value = "/signUp", produces = MediaType.TEXT_PLAIN_VALUE)
+    public String  token(@Valid @RequestBody SignUpRequest signUpRequest) {
         logger.debug("Token requested for user: {}", signUpRequest.getLogin());
         Optional<User> user = userRepository.findByLogin(signUpRequest.getLogin());
         if (user.isPresent() && passwordEncoder.matches(signUpRequest.getPassword(), user.get().getPassword())) {
             String token = tokenService.generateToken(user.get());
             logger.debug("Token granted: {}", token);
-            Map<String, String> map = new HashMap<>();
-            map.put("token", token);
-            map.put("token with bearer", "Bearer " + token);
-            return ResponseEntity.ok(map);
+            return token;
         }
         logger.debug("User not found: {}", signUpRequest.getLogin());
         throw new UserNotFound();
