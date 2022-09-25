@@ -1,0 +1,30 @@
+= Course API
+
+== Methods
+=== Course publish
+You can publish a course with status *DRAFT*
+
+.request
+include::{snippets}/publish/http-request.adoc[]
+.response
+include::{snippets}/publish/http-response.adoc[]
+.response-fileds
+|===
+|Path|Type|Description
+
+|name
+|String
+|Title of course
+|description
+|String
+|Description of course
+|state
+|String
+|State of course
+|startDate
+|Date
+|Start date of course
+|endDate
+|Date
+|End date of course
+|===

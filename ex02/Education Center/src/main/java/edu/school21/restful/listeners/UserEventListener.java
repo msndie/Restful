@@ -18,7 +18,9 @@ public class UserEventListener extends AbstractRepositoryEventListener<User> {
     }
 
     private void validate(User user) {
-        if (user.getFirstName().trim().isEmpty() || user.getLastName().trim().isEmpty()
+        if (user == null || user.getLogin() == null || user.getPassword() == null
+                || user.getFirstName() == null || user.getLastName() == null || user.getRole() == null
+                || user.getFirstName().trim().isEmpty() || user.getLastName().trim().isEmpty()
                 || user.getLogin().trim().isEmpty() || user.getPassword().trim().isEmpty()) {
             throw new BadRequestException();
         }
