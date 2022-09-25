@@ -1,17 +1,18 @@
 # Restful
 Goal of this project is to learn how to use Spring mechanisms to develop REST applications.
 
-Ex00 and ex01 ready, currently working on ex02, which requires use of Spring-data-rest.
-
-<!--
 <details>
-<summary>Screenshots</summary>
--->
+<summary>Schema</summary>
 <img src="/screenshots/schema.png">
-<img src="/screenshots/api.png">
-<!--
 </details>
--->
+<details>
+<summary>Api</summary>
+<img src="/screenshots/api.png">
+</details>
+<details>
+<summary>Adoc</summary>
+<img src="/screenshots/publish_adoc_documentation.png">
+</details>
 
 In this project we use:
 - Rest Controllers
