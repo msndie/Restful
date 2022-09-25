@@ -19,9 +19,9 @@ In this project we use:
 - Spring security (OAuth2 server) in ex01 and ex02 for JWT role based auth. GET operations are available for user with any role, but POST, PUT and DELETE only for ADMIN
 - Hibernate
 - Spring Data Jpa
-- Mocks for tests
+- Spring Data Rest in ex02
 - Swagger
-- Spring Data Rest in ex02.
+- Mockito and Jupiter for tests
 
 # Launch
 You need to create an empty database in postgres.
