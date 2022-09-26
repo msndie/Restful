@@ -53,7 +53,7 @@ public class SecurityConfig {
         return http
                 .csrf().disable()
                 .authorizeRequests(auth -> auth
-                        .antMatchers("/", "/webjars/**", "/explorer/**").permitAll()
+                        .antMatchers("/", "/webjars/**", "/explorer/**", "/docs/**").permitAll()
                         .antMatchers("/signUp").not().authenticated()
                         .mvcMatchers(HttpMethod.DELETE, "/courses/**", "/users/**", "/lessons/**")
                         .hasAuthority(Role.ADMINISTRATOR.name())

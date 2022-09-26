@@ -43,4 +43,4 @@ To do so you need to send POST request with following information on http://loca
 ```
 This way you get your token, you need to add it in Authorization header with each request.
 You can find available mappings on <b>http://localhost:8080/swagger-ui/</b> page for ex00 and ex01.
-For ex02 you can use HAL browser
+For ex02 you can use HAL browser. Auto-generated snippets based documentation for course publish method can be found on <b>http://localhost:8080/docs/publish</b>
