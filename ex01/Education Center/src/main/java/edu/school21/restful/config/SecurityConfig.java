@@ -89,7 +89,7 @@ public class SecurityConfig {
 
     @Bean
     public JwtEncoder jwtEncoder() throws NoSuchAlgorithmException, InvalidKeyException {
-        JWKSource<SecurityContext> immutableSecret = new ImmutableSecret<SecurityContext>(key());
+        JWKSource<SecurityContext> immutableSecret = new ImmutableSecret<>(key());
         return new NimbusJwtEncoder(immutableSecret);
     }
 }

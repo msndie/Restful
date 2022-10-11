@@ -51,11 +51,10 @@ class RestfulApplicationTests {
 
     private static Course course;
     private static User user;
-    private static DateTimeFormatter fmtForDate;
 
     @BeforeAll
     public static void beforeAll() {
-        fmtForDate = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        DateTimeFormatter fmtForDate = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         LocalDate start = LocalDate.parse("26/02/2022", fmtForDate);
         LocalDate end = LocalDate.parse("01/03/2022", fmtForDate);
         course = new Course(1L,
@@ -88,7 +87,7 @@ class RestfulApplicationTests {
         when(courseService.findAll()).thenReturn(Stream.of(course)
                 .collect(Collectors.toList()));
         mockMvc.perform(get("/courses"))
-//                .andDo(print())
+                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()", Matchers.is(1)))
                 .andExpect(jsonPath("$[0]['course'].id", Matchers.is(1)))
@@ -102,7 +101,7 @@ class RestfulApplicationTests {
     void getCourseById() throws Exception {
         when(courseService.getById(1L)).thenReturn(Optional.of(course));
         mockMvc.perform(get("/courses/1"))
-//                .andDo(print())
+                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$['course'].id", Matchers.is(1)))
                 .andExpect(jsonPath("$['course'].startDate", Matchers.is("26/02/2022")))
@@ -117,7 +116,7 @@ class RestfulApplicationTests {
         when(userService.findById(1L)).thenReturn(Optional.of(user));
         mockMvc.perform(post("/courses/1/students")
                         .content("{\"id\":1}").contentType(MediaType.APPLICATION_JSON))
-//                .andDo(print())
+                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$['user'].id", Matchers.is(1)))
                 .andExpect(jsonPath("$['user'].firstName", Matchers.is("Test")))
@@ -126,15 +125,13 @@ class RestfulApplicationTests {
 
     @Test
     void putCourseById() throws Exception {
-        LocalDate start = LocalDate.parse("25/02/2022", fmtForDate);
-        LocalDate end = LocalDate.parse("05/03/2022", fmtForDate);
         when(courseService.existsById(1L)).thenReturn(true);
         mockMvc.perform(put("/courses/1").contentType(MediaType.APPLICATION_JSON)
                 .content("{\"startDate\":\"25/02/2022\"," +
                         "\"endDate\":\"05/03/2022\"," +
                         "\"name\":\"Changed\"," +
                         "\"description\":\"Changed course\"}"))
-//                .andDo(print())
+                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$['course'].id", Matchers.is(1)))
                 .andExpect(jsonPath("$['course'].startDate", Matchers.is("25/02/2022")))
@@ -148,7 +145,7 @@ class RestfulApplicationTests {
     void deleteUserById() throws Exception {
         when(userService.findById(1L)).thenReturn(Optional.of(user));
         mockMvc.perform(delete("/users/1"))
-//                .andDo(print())
+                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$['user'].id", Matchers.is(1)))
                 .andExpect(jsonPath("$['user'].firstName", Matchers.is(user.getFirstName())))
